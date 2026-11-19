@@ -38,6 +38,8 @@
   .no { margin-left: 12px; font: 500 13px "IBM Plex Mono", monospace; color: var(--dim); }
   .no b { color: var(--accent); }
   footer { font-size: 12.5px; color: var(--faint); text-align: center; padding-block: 24px 40px; }
+  footer .rec { color: #9a2b30; text-decoration: none; white-space: nowrap; }
+  footer .rec:hover, footer .rec:focus-visible { text-decoration: underline; color: var(--accent); }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -67,7 +69,7 @@
     <a class="go" id="go" href="game.html" aria-disabled="true">근무 지시서 열람 →</a><span class="no">근무자 번호 <b>13</b></span>
   </section>
 </div></main>
-<footer><div class="in">■■승강기 주식회사 · 문의 recruit@■■lift.co.kr · 고장신고 1588-1313 · 모든 근무는 좋게 끝납니다.</div></footer>
+<footer><div class="in">■■승강기 주식회사 · 문의 recruit@■■lift.co.kr · 고장신고 1588-1313 · 모든 근무는 좋게 끝납니다. <a class="rec" href="prologue.html" title="관계 기관 기록 열람">[기록 열람]</a></div></footer>
 <script>
 (() => {
   const v = document.getElementById('v'), cover = document.getElementById('cover'), skip = document.getElementById('skip'), bar = document.getElementById('bar'), done = document.getElementById('done'), go = document.getElementById('go');
