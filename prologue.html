@@ -550,6 +550,9 @@
     .rec { top: auto; bottom: 46px; font-size: 9px; }
     .toast { width: calc(100% - 24px); }
   }
+  .tray .rst { gap: 5px; padding: 0 9px; font-size: 12px; }
+  .tray .rst span { white-space: nowrap; }
+  @media (max-width: 900px) { .tray .rst span { display: none; } }
   /* ── 창 크기 조절 (8방향) ── */
   .rz.n { top: -4px; left: 8px; right: 8px; height: 8px; cursor: ns-resize; } .rz.e { top: 8px; bottom: 8px; } .rz.w { top: 8px; bottom: 8px; } .rz.s { left: 8px; right: 8px; }
   .rz.ne { top: -5px; right: -5px; width: 14px; height: 14px; cursor: nesw-resize; } .rz.nw { top: -5px; left: -5px; width: 14px; height: 14px; cursor: nwse-resize; } .rz.sw { bottom: -5px; left: -5px; width: 14px; height: 14px; cursor: nesw-resize; }
@@ -1648,9 +1651,11 @@ function taskbar() {
     <div class="tray">
       <button type="button" class="t" title="숨겨진 아이콘 표시">${I.up}</button><button type="button" class="t" id="updb" title="업데이트를 사용할 수 있습니다">${I.sync}<i class="dot"></i></button><button type="button" class="t ime" id="imeb" title="한글 입력">가</button>
       <button type="button" class="t" id="netb" title="내선 업무망&#10;인터넷에 연결됨">${I.net}</button><button type="button" class="t" id="volb" title="스피커: 30%">${I.vol}</button>
+      <button type="button" class="t rst" id="rstb" title="처음부터 다시 재생&#10;진행 기록을 지우고 문서번호 입력부터 다시 시작합니다"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg><span>처음부터</span></button>
       <button type="button" class="t clk" id="clk"></button>
       <button type="button" class="t" id="ncBtn" style="padding:0 12px" title="알림">${I.noti}<span class="ncnt" id="ncCnt" hidden>0</span></button><button type="button" class="showd" id="showd" title="바탕 화면 보기"></button>
     </div></div>`);
+  $('#rstb').onclick = e => { e.stopPropagation(); resetAll(); };
   $('#tb .pwr').onclick = e => { e.stopPropagation(); $('#start') ? closeStart() : openStart(); };
   const si = $('#srchIn'); si.oninput = () => searchMenu(si.value); si.onfocus = () => searchMenu(si.value);
   si.onkeydown = e => { if (e.key === 'Enter') { const f = $('.sres button'); if (f) f.click(); } if (e.key === 'Escape') { si.value = ''; closeStart(); si.blur(); } };
@@ -1724,8 +1729,17 @@ function openStart() {
   $$('[data-nw]', m).forEach(b => b.onclick = () => { closeStart(); app('nw', { page: b.dataset.nw }); });
   $$('[data-team]', m).forEach(b => b.onclick = () => { closeStart(); if (b.dataset.team === 'x') msgbox('내선 업무망', '접근 불가', I.stop); else app('nw', { page: 'now' }); });
   $$('[data-go]', m).forEach(b => b.onclick = () => { closeStart(); const g = b.dataset.go; if (g === 'set') app('set'); else app('fx', { path: g }); });
-  $('#pwrb').onclick = e => { e.stopPropagation(); const pm = document.createElement('div'); pm.className = 'pmenu'; pm.innerHTML = `<button type="button" data-p="lock">잠금</button><button type="button" data-p="sleep">절전</button><button type="button" data-p="off">시스템 종료</button><button type="button" data-p="re">다시 시작</button>`; m.appendChild(pm);
-    $$('button', pm).forEach(x => x.onclick = () => { closeStart(); const p = x.dataset.p; if (p === 'lock') return relock(); if (p === 'sleep') return sleepScreen(); msgbox('초자연재난관리국 내선 업무망', '업무 시간(09:00–18:00)에는 단말을 끌 수 없습니다.\n작성 중인 문서를 먼저 저장하고 결재를 상신하십시오.', I.info); }); };
+  $('#pwrb').onclick = e => { e.stopPropagation(); const pm = document.createElement('div'); pm.className = 'pmenu'; pm.innerHTML = `<button type="button" data-p="lock">잠금</button><button type="button" data-p="sleep">절전</button><button type="button" data-p="off">시스템 종료</button><button type="button" data-p="re">다시 시작 (처음부터)</button>`; m.appendChild(pm);
+    $$('button', pm).forEach(x => x.onclick = () => { closeStart(); const p = x.dataset.p; if (p === 'lock') return relock(); if (p === 'sleep') return sleepScreen(); if (p === 're') return resetAll(); msgbox('초자연재난관리국 내선 업무망', '업무 시간(09:00–18:00)에는 단말을 끌 수 없습니다.\n작성 중인 문서를 먼저 저장하고 결재를 상신하십시오.', I.info); }); };
+}
+async function resetAll() {
+  const v = await msgbox('처음부터 다시 재생', '진행 기록을 모두 지우고 문서번호 입력 화면으로 돌아갑니다.\n저장된 보고서, 내려받은 페이지, 메신저 내용이 사라지며 되돌릴 수 없습니다.', I.info, [['처음부터 다시', 'y'], ['취소', 'n']]);
+  if (v !== 'y') return;
+  hardReset();
+}
+function hardReset() {
+  clearSave(); try { ['f13_paper', 'f13_pro_done'].forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); } catch (e) {}
+  location.replace(location.pathname + location.search);
 }
 function relock() { const L = document.createElement('div'); L.className = 'lock in'; L.innerHTML = `<div class="tm">${hhmm(G.min)}</div><div class="dt">3월 12일 목요일</div><div class="ac"><div class="av">단</div><div class="nm">단우</div><div class="sb">잠김 · 눌러서 잠금 해제</div></div>`; S().appendChild(L); L.onclick = async () => { $('.sb', L).textContent = '●●●●●●●●'; await wait(500); L.style.opacity = 0; await wait(400); L.remove(); }; }
 function sleepScreen() { const L = document.createElement('div'); L.style.cssText = 'position:absolute;inset:0;background:#000;z-index:990;cursor:none'; S().appendChild(L); setTimeout(() => L.onclick = () => L.remove(), 600); }
