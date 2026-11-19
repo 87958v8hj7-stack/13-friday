@@ -502,6 +502,8 @@
   .t-menu .m13 button.flash { opacity: 1; }
   .t-wiki { position: absolute; left: 0; right: 0; bottom: 34px; margin: 0; font-family: var(--mono); font-size: 11px; color: #4d4c49; letter-spacing: .02em; }
   .t-wiki span { color: #7d0f18; }
+  .t-wiki a { color: #7d0f18; text-decoration: none; position: relative; z-index: 5; cursor: pointer; }
+  .t-wiki a:hover, .t-wiki a:focus-visible { text-decoration: underline; color: #b3141f; }
   .t-menu button.sel::before { content: "▶"; position: absolute; left: -22px; top: 50%; transform: translateY(-50%); font-size: 10px; color: var(--red); animation: blink 1s steps(1) infinite; }
   .t-menu button:disabled { color: #3a3a38; cursor: default; }
   .t-menu button:focus-visible { outline: none; }
@@ -1560,7 +1562,7 @@
       <li class="m13"><button type="button" id="m13" tabindex="-1" aria-hidden="true">13층</button></li>
     </ul>
     <p class="t-play" id="tPlay" aria-live="off"></p>
-    <p class="t-wiki">이 문서를 읽은 사용자의 근무 기록이 자동으로 추가됩니다. <span>[편집]</span></p>
+    <p class="t-wiki">이 문서를 읽은 사용자의 근무 기록이 자동으로 추가됩니다. <a href="prologue.html" class="t-edit" title="문서 편집 기록">[편집]</a></p>
   </section>
 
   <!-- 게임 -->
